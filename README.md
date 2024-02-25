@@ -1,0 +1,1 @@
+# go-to-factory-bot.nvim
