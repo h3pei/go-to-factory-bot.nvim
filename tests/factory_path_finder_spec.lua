@@ -21,11 +21,11 @@ describe("find_by_name", function()
 
   it("returns factory_file path when factory_file with suffix exists", function()
     vim.fn.writefile({}, "spec/factories/users_factory.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories", "_factory"), "spec/factories/users_factory.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories", "factory"), "spec/factories/users_factory.rb")
   end)
 
   it("returns nil when factory_file with suffix does not exist", function()
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories", "_factory"), nil)
+    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories", "factory"), nil)
   end)
 end)
