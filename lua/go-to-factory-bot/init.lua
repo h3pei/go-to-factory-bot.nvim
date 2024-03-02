@@ -1,17 +1,17 @@
 local Config = require("go-to-factory-bot.config")
-local ModelNameExtractor = require("go-to-factory-bot.model_name_extractor")
+local FactoryNameExtractor = require("go-to-factory-bot.factory_name_extractor")
 local FactoryFinder = require("go-to-factory-bot.factory_finder")
 
 local M = {}
 
 local function go_to_factory_bot()
   local current_line = vim.trim(vim.api.nvim_get_current_line())
-  local model_name = ModelNameExtractor.extract(current_line)
-  if not model_name then
+  local factory_name = FactoryNameExtractor.extract(current_line)
+  if not factory_name then
     return
   end
 
-  local factory_path = FactoryFinder.find_by_model(model_name, Config.definition_file_path, Config.suffix)
+  local factory_path = FactoryFinder.find_by_model(factory_name, Config.definition_file_path, Config.suffix)
   if factory_path then
     vim.api.nvim_command(Config.jump_command .. " " .. factory_path)
   end

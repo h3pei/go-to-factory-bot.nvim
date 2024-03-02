@@ -14,16 +14,16 @@ function M.extract(line)
     return
   end
 
-  local model_name = nil
+  local factory_name = nil
 
   for _, factory_bot_method in pairs(factory_bot_methods) do
-    model_name = string.match(line, [[^.*]] .. factory_bot_method .. [[%(:([%w_]+).*%).*$]])
-    if model_name then
+    factory_name = string.match(line, [[^.*]] .. factory_bot_method .. [[%(:([%w_]+).*%).*$]])
+    if factory_name then
       break
     end
   end
 
-  return model_name
+  return factory_name
 end
 
 return M
