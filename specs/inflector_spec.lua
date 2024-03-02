@@ -1,6 +1,6 @@
 assert = require("luassert")
 
-describe(".pluralize", function()
+describe("pluralize", function()
   local Inflector = require("go-to-factory-bot.inflector")
 
   local function subject(word)
