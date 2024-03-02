@@ -1,6 +1,6 @@
 local Config = require("go-to-factory-bot.config")
 local FactoryNameExtractor = require("go-to-factory-bot.factory_name_extractor")
-local FactoryFinder = require("go-to-factory-bot.factory_finder")
+local FactoryPathFinder = require("go-to-factory-bot.factory_path_finder")
 
 local M = {}
 
@@ -11,7 +11,7 @@ local function go_to_factory_bot()
     return
   end
 
-  local factory_path = FactoryFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix)
+  local factory_path = FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix)
   if factory_path then
     vim.api.nvim_command(Config.jump_command .. " " .. factory_path)
   end
