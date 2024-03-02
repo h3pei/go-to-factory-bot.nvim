@@ -147,4 +147,17 @@ describe("pluralize", function()
   describe("word of length 1", function()
     it("returns word as it is", function() assert.equals(subject("a"), "a") end)
   end)
+
+  describe("custom_factory_name_patterns", function()
+    it("returns custom word", function()
+      local Config = require("go-to-factory-bot.config")
+      Config.setup({
+        custom_factory_name_patterns = {
+          ["foo"] = "bar"
+        }
+      })
+
+      assert.equals(subject("foo"), "bar")
+    end)
+  end)
 end)

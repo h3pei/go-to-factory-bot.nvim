@@ -8,3 +8,5 @@ vim.opt.rtp:append(".")
 vim.opt.rtp:append(plenary_dir)
 
 vim.cmd("runtime plugin/plenary.vim")
+
+require("go-to-factory-bot").setup({})

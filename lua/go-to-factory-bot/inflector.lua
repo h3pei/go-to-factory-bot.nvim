@@ -1,3 +1,5 @@
+local config = require("go-to-factory-bot.config")
+
 local M = {}
 
 local irregulars = {
@@ -30,6 +32,10 @@ local irregulars = {
 ---@param word string
 ---@return string
 function M.pluralize(word)
+  if config.custom_factory_name_patterns[word] then
+    return config.custom_factory_name_patterns[word]
+  end
+
   if 2 > #word then
     return word
   end
