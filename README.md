@@ -1,40 +1,50 @@
 # go-to-factory-bot.nvim
 
-`go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to a [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from a line containing a factory_bot method call such as `#create` or `#build`.
+`go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
 
-For example, imagine a situation where you are editing an RSpec file containing lines such as:
+## Usecase
+
+For example, suppose you are editing an RSpec file that uses factory_bot as follows:
 
 ```ruby
 let(:user) { create(:user, :admin, name: "Bob") }
 ```
-And at this point, if you run the command `:FactoryBotJump` with the cursor over this line, it will jump to the user factory file (typically `spec/factories/users.rb`).
+
+Sometimes you will want to check how the `:admin` trait is defined and what the default values are for unspecified attributes other than `name`.
+
+In this case, you can run the `:FactoryBotJump` command on this line to jump to the user factory file (typically `spec/factories/users.rb`) in the case of this sample code
 
 ## Installation
 
-[lazy.nvim](https://github.com/folke/lazy.nvim):
+[lazy.nvim](https://github.com/folke/lazy.nvim) :
 
 ```lua
 { "mogulla3/go-to-factory-bot.nvim" }
 ```
 
-[vim-plug](https://github.com/junegunn/vim-plug):
+[vim-plug](https://github.com/junegunn/vim-plug) :
 
 ```vim
 Plug "mogulla3/go-to-factory-bot.nvim"
 ```
 
-Otherwise, install with your preferred plugin manager.
-Once installed, the `setup` function should be called as follows:
+It can also be installed by other plugin managers. Once installed, the `setup` function should be called as follows:
 
 ```lua
 require('go-to-factory-bot').setup()
 ```
 
-Some settings can be customised. See [#Configuration] for more information.
+Some settings can be customised. See [Configuration](#Configuration) for more information.
 
 ## Usage / Command
 
 This plugin only provides `:FactoryBotJump` command!
+Simply run this command on the line containing the FactoryBot method call.
+
+It may be more convenient to define a shortcut command called `:FJ` as follows.
+```lua
+vim.api.nvim_create_user_command("FJ", "FactoryBotJump", {})
+```
 
 ## Configuration
 
