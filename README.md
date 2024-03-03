@@ -2,6 +2,8 @@
 
 `go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
 
+<img src="https://github.com/mogulla3/go-to-factory-bot.nvim/assets/1377455/0076ef91-0390-4f15-ab45-668e710e4ad0" alt="go-to-factory-bot-nvim-demo" width="85%" />
+
 ## Usecase
 
 For example, suppose you are editing an RSpec file that uses factory_bot as follows:
@@ -12,23 +14,23 @@ let(:user) { create(:user, :admin, name: "Bob") }
 
 Sometimes you will want to check how the `:admin` trait is defined and what the default values are for unspecified attributes other than `name`.
 
-In this case, you can run the `:FactoryBotJump` command on this line to jump to the user factory file (typically `spec/factories/users.rb`) in the case of this sample code
+In this case, you can run the `:FactoryBotJump` command on this line to jump to the user factory file (typically `spec/factories/users.rb`).
 
 ## Installation
 
-[lazy.nvim](https://github.com/folke/lazy.nvim) :
+[lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
 { "mogulla3/go-to-factory-bot.nvim" }
 ```
 
-[vim-plug](https://github.com/junegunn/vim-plug) :
+[vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
 Plug "mogulla3/go-to-factory-bot.nvim"
 ```
 
-It can also be installed by other plugin managers. Once installed, the `setup` function should be called as follows:
+Once installed, the `setup` function should be called as follows:
 
 ```lua
 require('go-to-factory-bot').setup()
@@ -38,8 +40,9 @@ Some settings can be customised. See [Configuration](#Configuration) for more in
 
 ## Usage / Command
 
-This plugin only provides `:FactoryBotJump` command!
-Simply run this command on the line containing the FactoryBot method call.
+This plugin only provides `:FactoryBotJump` command.
+
+So, simply run this command on the line containing the factory_bot method call.
 
 It may be more convenient to define a shortcut command called `:FJ` as follows.
 ```lua
