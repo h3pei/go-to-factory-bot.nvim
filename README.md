@@ -79,6 +79,10 @@ require('go-to-factory-bot').setup({
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
 
+  -- Whether to pluralize the factory name when searching for the factory file.
+  -- If you set it to false, it will not pluralize the factory name.
+  pluralize_factory_name = true,
+
   -- Suffix of the factory file.
   -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
   --
