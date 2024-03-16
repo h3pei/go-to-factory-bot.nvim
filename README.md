@@ -14,7 +14,7 @@ let(:user) { create(:user, :admin, name: "Bob") }
 
 Sometimes you will want to check how the `:admin` trait is defined and what the default values are for unspecified attributes other than `name`.
 
-In this case, you can run the `:FactoryBotJump` command on this line to jump to the user factory file (typically `spec/factories/users.rb`).
+In this case, you can run the `:GoToFactoryBot` command on this line to jump to the user factory file (typically `spec/factories/users.rb`).
 
 ## Installation
 
@@ -40,13 +40,13 @@ Some settings can be customised. See [Configuration](#Configuration) for more in
 
 ## Usage / Command
 
-This plugin only provides `:FactoryBotJump` command.
+This plugin only provides `:GoToFactoryBot` command.
 
 So, simply run this command on the line containing the factory_bot method call.
 
 It may be more convenient to define a shortcut command called `:FJ` as follows.
 ```lua
-vim.api.nvim_create_user_command("FJ", "FactoryBotJump", {})
+vim.api.nvim_create_user_command("GF", "GoToFactoryBot", {})
 ```
 
 ## Configuration

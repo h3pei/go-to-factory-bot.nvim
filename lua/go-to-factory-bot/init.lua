@@ -22,9 +22,9 @@ function M.setup(user_config)
   user_config = user_config or {}
   Config.setup(user_config)
 
-  vim.api.nvim_create_user_command("FactoryBotJump", function()
+  vim.api.nvim_create_user_command("GoToFactoryBot", function()
     go_to_factory_bot()
-  end, { nargs = 0, force = true, desc = "Jump to the factory_bot file from the line containing the factory_bot method call." })
+  end, { nargs = 0, force = true, desc = "Go to the factory_bot file from the line containing the factory_bot method call." })
 end
 
 return M
