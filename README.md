@@ -44,7 +44,7 @@ This plugin only provides `:GoToFactoryBot` command.
 
 So, simply run this command on the line containing the factory_bot method call.
 
-It may be more convenient to define a shortcut command called `:FJ` as follows.
+It may be more convenient to define a shortcut command called `:GF` as follows.
 ```lua
 vim.api.nvim_create_user_command("GF", "GoToFactoryBot", {})
 ```
