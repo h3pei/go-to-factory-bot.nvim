@@ -11,7 +11,8 @@ local function go_to_factory_bot()
     return
   end
 
-  local factory_path = FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix)
+  local factory_path =
+    FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix, Config.pluralize_factory_name)
   if factory_path then
     vim.api.nvim_command(Config.jump_command .. " " .. factory_path)
   end

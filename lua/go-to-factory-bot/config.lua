@@ -25,6 +25,10 @@ local default_config = {
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
 
+  -- Whether to pluralize the factory name when searching for the factory file.
+  -- If you set it to false, it will not pluralize the factory name.
+  pluralize_factory_name = true,
+
   -- Suffix of the factory file.
   -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
   --
@@ -41,6 +45,7 @@ function Config.setup(user_config)
     custom_factory_name_patterns = { config.custom_factory_name_patterns, "table" },
     definition_file_path = { config.definition_file_path, "string" },
     jump_command = { config.jump_command, "string" },
+    pluralize_factory_name = { config.pluralize_factory_name, "boolean" },
     suffix = { config.suffix, "string" },
   })
 end

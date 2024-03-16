@@ -5,9 +5,15 @@ local M = {}
 ---@param factory_name string
 ---@param definition_file_path string
 ---@param suffix string
+---@param pluralize_factory_name boolean
 ---@return string|nil
-function M.find_by_name(factory_name, definition_file_path, suffix)
-  local plural_name = Inflector.pluralize(factory_name)
+function M.find_by_name(factory_name, definition_file_path, suffix, pluralize_factory_name)
+  local plural_name
+  if pluralize_factory_name then
+    plural_name = Inflector.pluralize(factory_name)
+  else
+    plural_name = factory_name
+  end
 
   local factory_file_name
   if suffix ~= "" then
