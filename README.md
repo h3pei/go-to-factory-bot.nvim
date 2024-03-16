@@ -2,7 +2,7 @@
 
 `go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
 
-![go-to-factory-bot-nvim-demo](https://github.com/mogulla3/go-to-factory-bot.nvim/assets/1377455/0076ef91-0390-4f15-ab45-668e710e4ad0)
+![go-to-factory-bot-nvim-demo-v2](https://github.com/mogulla3/go-to-factory-bot.nvim/assets/1377455/f927117e-3bc9-487d-a24a-b8f327901647)
 
 ## Usecase
 
