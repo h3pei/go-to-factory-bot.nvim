@@ -41,6 +41,9 @@ local Config = {}
 function Config.setup(user_config)
   config = vim.tbl_deep_extend("force", default_config, user_config)
 
+  -- FIXME: In Neovim 0.11, the current usage of vim.validate() will be deprecated.
+  -- https://neovim.io/doc/user/deprecated.html#deprecated-0.11
+  -- https://neovim.io/doc/user/lua.html#vim.validate()
   vim.validate({
     custom_factory_name_patterns = { config.custom_factory_name_patterns, "table" },
     definition_file_path = { config.definition_file_path, "string" },
