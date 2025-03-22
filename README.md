@@ -2,7 +2,7 @@
 
 `go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
 
-![go-to-factory-bot-nvim-demo-v2](https://github.com/mogulla3/go-to-factory-bot.nvim/assets/1377455/f927117e-3bc9-487d-a24a-b8f327901647)
+![go-to-factory-bot-nvim-demo-v2](https://github.com/h3pei/go-to-factory-bot.nvim/assets/1377455/f927117e-3bc9-487d-a24a-b8f327901647)
 
 ## Usecase
 
@@ -21,13 +21,13 @@ In this case, you can run the `:GoToFactoryBot` command on this line to jump to 
 [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-{ "mogulla3/go-to-factory-bot.nvim" }
+{ "h3pei/go-to-factory-bot.nvim" }
 ```
 
 [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug "mogulla3/go-to-factory-bot.nvim"
+Plug "h3pei/go-to-factory-bot.nvim"
 ```
 
 Once installed, the `setup` function should be called as follows:
