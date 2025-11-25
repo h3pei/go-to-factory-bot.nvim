@@ -15,7 +15,7 @@ local FACTORY_BOT_METHODS = {
 
 ---Treesitterが利用可能かチェック
 ---@return boolean
-local function is_treesitter_available()
+function M.is_available()
   local ok, _ = pcall(require, "nvim-treesitter.parsers")
   if not ok then
     return false
@@ -116,14 +116,9 @@ local function is_factory_bot_method(method_name)
 end
 
 ---カーソル位置からファクトリ名を抽出
----@param line string (unused, kept for interface compatibility)
 ---@return string|nil factory_name
 ---@return string|nil error_message
-function M.extract(line)
-  if not is_treesitter_available() then
-    return nil, "Treesitter is not available. Please install nvim-treesitter and Ruby parser (:TSInstall ruby)"
-  end
-
+function M.extract()
   local node = get_node_at_cursor()
   if not node then
     return nil, "No node at cursor"
