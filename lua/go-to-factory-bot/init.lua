@@ -1,7 +1,6 @@
 local Config = require("go-to-factory-bot.config")
 local FactoryNameExtractor = require("go-to-factory-bot.factory_name_extractor")
 local FactoryPathFinder = require("go-to-factory-bot.factory_path_finder")
-local TreesitterExtractor = require("go-to-factory-bot.treesitter_extractor")
 
 local M = {}
 
@@ -14,8 +13,8 @@ end
 local function go_to_factory_bot()
   local current_line = vim.trim(vim.api.nvim_get_current_line())
 
-  -- Treesitter extractorから直接抽出し、エラーメッセージも取得
-  local factory_name, error_message = TreesitterExtractor.extract()
+  -- FactoryNameExtractorを経由してファクトリ名を抽出
+  local factory_name, error_message = FactoryNameExtractor.extract(current_line)
 
   if not factory_name then
     notify(
