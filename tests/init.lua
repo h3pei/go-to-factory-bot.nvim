@@ -1,12 +1,21 @@
-local plenary_dir = os.getenv("PLENARY_DIR") or "/tmp/plenary.nvim"
-local is_not_a_directory = vim.fn.isdirectory(plenary_dir) == 0
-if is_not_a_directory then
-  vim.fn.system({ "git", "clone", "https://github.com/nvim-lua/plenary.nvim", plenary_dir })
+-- Minimal init for testing
+vim.cmd([[set runtimepath+=.]])
+vim.cmd([[set runtimepath+=~/.local/share/nvim/lazy/plenary.nvim]])
+vim.cmd([[set runtimepath+=~/.local/share/nvim/lazy/nvim-treesitter]])
+
+-- Load plugins
+vim.cmd([[runtime plugin/plenary.vim]])
+vim.cmd([[runtime plugin/nvim-treesitter.lua]])
+
+-- Ensure Ruby parser is available
+local ok, _ = pcall(vim.treesitter.language.add, "ruby")
+if not ok then
+  print("Warning: Ruby tree-sitter parser not found. Some tests may fail.")
 end
 
-vim.opt.rtp:append(".")
-vim.opt.rtp:append(plenary_dir)
+-- Basic settings for testing
+vim.o.swapfile = false
+vim.o.hidden = true
 
-vim.cmd("runtime plugin/plenary.vim")
-
-require("go-to-factory-bot").setup({})
+-- Initialize config (but not the full plugin to avoid Treesitter check at init time)
+require("go-to-factory-bot.config").setup({})

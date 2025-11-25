@@ -39,7 +39,34 @@ local function get_node_at_cursor()
   return root:named_descendant_for_range(row, col, row, col)
 end
 
+---メソッド名を取得
+---@param call_node TSNode
+---@return string|nil
+local function get_method_name(call_node)
+  for child in call_node:iter_children() do
+    local child_type = child:type()
+    if child_type == "identifier" or child_type == "method" then
+      local name = vim.treesitter.get_node_text(child, 0)
+      return name
+    end
+  end
+  return nil
+end
+
+---メソッド名がFactoryBotメソッドかチェック
+---@param method_name string
+---@return boolean
+local function is_factory_bot_method(method_name)
+  for _, name in ipairs(FACTORY_BOT_METHODS) do
+    if name == method_name then
+      return true
+    end
+  end
+  return false
+end
+
 ---ノードからメソッド呼び出しを探す（親ノードを遡る）
+---FactoryBotメソッドの呼び出しが見つかるまで探索を続ける
 ---@param node TSNode
 ---@return TSNode|nil
 local function find_method_call(node)
@@ -53,26 +80,17 @@ local function find_method_call(node)
 
     local node_type = current:type()
     if node_type == "call" or node_type == "method_call" then
-      return current
+      -- メソッド名を取得してFactoryBotメソッドかチェック
+      local method_name = get_method_name(current)
+      if method_name and is_factory_bot_method(method_name) then
+        return current
+      end
+      -- FactoryBotメソッドでない場合は、さらに親を探索
     end
 
     current = current:parent()
   end
 
-  return nil
-end
-
----メソッド名を取得
----@param call_node TSNode
----@return string|nil
-local function get_method_name(call_node)
-  for child in call_node:iter_children() do
-    local child_type = child:type()
-    if child_type == "identifier" or child_type == "method" then
-      local name = vim.treesitter.get_node_text(child, 0)
-      return name
-    end
-  end
   return nil
 end
 
@@ -92,7 +110,7 @@ local function get_first_symbol_argument(call_node)
 
         -- :"user-profile" のようなクォート付きシンボル
         -- Rubyのシンボルは string ノードを子に持つことがある
-        if arg:type() == "hash_key_symbol" or arg:type() == "symbol_literal" then
+        if arg:type() == "hash_key_symbol" or arg:type() == "symbol_literal" or arg:type() == "delimited_symbol" then
           local text = vim.treesitter.get_node_text(arg, 0)
           -- クォートと ":" を除去し、ハイフンをアンダースコアに変換
           return text:gsub("^[:\"']+", ""):gsub("[\"']$", ""):gsub("%-", "_")
@@ -101,18 +119,6 @@ local function get_first_symbol_argument(call_node)
     end
   end
   return nil
-end
-
----メソッド名がFactoryBotメソッドかチェック
----@param method_name string
----@return boolean
-local function is_factory_bot_method(method_name)
-  for _, name in ipairs(FACTORY_BOT_METHODS) do
-    if name == method_name then
-      return true
-    end
-  end
-  return false
 end
 
 ---カーソル位置からファクトリ名を抽出
