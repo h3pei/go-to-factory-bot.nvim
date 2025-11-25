@@ -4,20 +4,20 @@ describe("extract", function()
   -- テスト用のバッファとカーソル位置を設定するヘルパー関数
   local function setup_test_buffer(line_content, cursor_col)
     local bufnr = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_option(bufnr, 'filetype', 'ruby')
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {line_content})
+    vim.api.nvim_buf_set_option(bufnr, "filetype", "ruby")
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, { line_content })
 
     local win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(win, bufnr)
     -- カーソル位置を設定（デフォルトはメソッド名の位置）
-    vim.api.nvim_win_set_cursor(win, {1, cursor_col or 0})
+    vim.api.nvim_win_set_cursor(win, { 1, cursor_col or 0 })
 
     return bufnr
   end
 
   local function cleanup_buffer(bufnr)
     if bufnr and vim.api.nvim_buf_is_valid(bufnr) then
-      vim.api.nvim_buf_delete(bufnr, {force = true})
+      vim.api.nvim_buf_delete(bufnr, { force = true })
     end
   end
 
@@ -183,16 +183,16 @@ describe("extract", function()
   describe("when method call spans multiple lines", function()
     it("returns factory name", function()
       local bufnr = vim.api.nvim_create_buf(false, true)
-      vim.api.nvim_buf_set_option(bufnr, 'filetype', 'ruby')
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "ruby")
       vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
         "create(",
         "  :user,",
         "  :admin",
-        ")"
+        ")",
       })
       local win = vim.api.nvim_get_current_win()
       vim.api.nvim_win_set_buf(win, bufnr)
-      vim.api.nvim_win_set_cursor(win, {1, 0})
+      vim.api.nvim_win_set_cursor(win, { 1, 0 })
 
       local result = FactoryNameExtractor.extract()
       cleanup_buffer(bufnr)

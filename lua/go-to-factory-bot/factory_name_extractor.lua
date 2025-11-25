@@ -95,7 +95,7 @@ local function get_first_symbol_argument(call_node)
         if arg:type() == "hash_key_symbol" or arg:type() == "symbol_literal" then
           local text = vim.treesitter.get_node_text(arg, 0)
           -- クォートと ":" を除去し、ハイフンをアンダースコアに変換
-          return text:gsub('^[:"\']+', ""):gsub('["\']$', ""):gsub("%-", "_")
+          return text:gsub("^[:\"']+", ""):gsub("[\"']$", ""):gsub("%-", "_")
         end
       end
     end

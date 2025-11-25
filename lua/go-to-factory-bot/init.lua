@@ -15,10 +15,7 @@ local function go_to_factory_bot()
   local factory_name, error_message = FactoryNameExtractor.extract()
 
   if not factory_name then
-    notify(
-      string.format("Could not extract factory name: %s", error_message or "unknown error"),
-      vim.log.levels.WARN
-    )
+    notify(string.format("Could not extract factory name: %s", error_message or "unknown error"), vim.log.levels.WARN)
     return
   end
 
@@ -26,10 +23,7 @@ local function go_to_factory_bot()
     FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix, Config.pluralize_factory_name)
 
   if not factory_path then
-    notify(
-      string.format("Factory file not found for: %s", factory_name),
-      vim.log.levels.WARN
-    )
+    notify(string.format("Factory file not found for: %s", factory_name), vim.log.levels.WARN)
     return
   end
 
@@ -43,11 +37,10 @@ function M.setup(user_config)
   -- Treesitterの前提条件チェック
   if not FactoryNameExtractor.is_available() then
     vim.notify(
-      "go-to-factory-bot.nvim: Treesitter is not available. " ..
-      "Please install nvim-treesitter and Ruby parser (:TSInstall ruby)",
+      "go-to-factory-bot.nvim: Treesitter is not available. " .. "Please install nvim-treesitter and Ruby parser (:TSInstall ruby)",
       vim.log.levels.WARN
     )
-    return  -- プラグインの初期化を中止
+    return -- プラグインの初期化を中止
   end
 
   vim.api.nvim_create_user_command("GoToFactoryBot", function()
