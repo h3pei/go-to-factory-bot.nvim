@@ -2,6 +2,8 @@
 
 `go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
 
+This plugin uses Treesitter to accurately parse Ruby code, supporting complex syntax including multi-line method calls and hyphenated factory names.
+
 ![go-to-factory-bot-nvim-demo-v2](https://github.com/h3pei/go-to-factory-bot.nvim/assets/1377455/f927117e-3bc9-487d-a24a-b8f327901647)
 
 ## Usecase
@@ -16,21 +18,49 @@ Sometimes you will want to check how the `:admin` trait is defined and what the 
 
 In this case, you can run the `:GoToFactoryBot` command on this line to jump to the user factory file (typically `spec/factories/users.rb`).
 
+## Requirements
+
+**This plugin requires Treesitter** to parse Ruby code accurately.
+
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
+- Ruby parser for Treesitter (install with `:TSInstall ruby`)
+
 ## Installation
 
-[lazy.nvim](https://github.com/folke/lazy.nvim)
+### [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-{ "h3pei/go-to-factory-bot.nvim" }
+{
+  "h3pei/go-to-factory-bot.nvim",
+  dependencies = {
+    "nvim-treesitter/nvim-treesitter",
+  },
+  config = function()
+    require('go-to-factory-bot').setup()
+  end,
+}
 ```
 
-[vim-plug](https://github.com/junegunn/vim-plug)
+After installing the plugin, make sure to install the Ruby parser:
 
 ```vim
-Plug "h3pei/go-to-factory-bot.nvim"
+:TSInstall ruby
 ```
 
-Once installed, the `setup` function should be called as follows:
+### [vim-plug](https://github.com/junegunn/vim-plug)
+
+```vim
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'h3pei/go-to-factory-bot.nvim'
+```
+
+After installing, run:
+
+```vim
+:TSInstall ruby
+```
+
+Then call the setup function:
 
 ```lua
 require('go-to-factory-bot').setup()
@@ -48,6 +78,31 @@ It may be more convenient to define a shortcut command called `:GF` as follows.
 ```lua
 vim.api.nvim_create_user_command("GF", "GoToFactoryBot", {})
 ```
+
+## Features
+
+### Supported Syntax
+
+Thanks to Treesitter, this plugin accurately handles:
+
+- **Single-line calls**: `create(:user)`
+- **Multi-line calls**:
+  ```ruby
+  create(
+    :user,
+    :admin
+  )
+  ```
+- **Hyphenated factory names**: `create(:"user-profile")` → jumps to `user_profiles.rb`
+- **Traits and attributes**: `create(:user, :admin, name: 'Bob')`
+- **Comment exclusion**: Method calls in comments are automatically ignored
+
+### Supported Methods
+
+- `create`
+- `build`
+- `build_stubbed`
+- `attributes_for`
 
 ## Configuration
 
@@ -83,6 +138,10 @@ require('go-to-factory-bot').setup({
   -- If you set it to false, it will not pluralize the factory name.
   pluralize_factory_name = true,
 
+  -- Whether to suppress error messages.
+  -- If you set it to true, error messages will not be displayed.
+  silent = false,
+
   -- Suffix of the factory file.
   -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
   --
@@ -90,3 +149,44 @@ require('go-to-factory-bot').setup({
   suffix = "",
 })
 ```
+
+## Troubleshooting
+
+### Error: "Treesitter is not available"
+
+This error occurs when Treesitter is not installed or the Ruby parser is not available.
+
+**Solution:**
+
+1. Install nvim-treesitter:
+   ```vim
+   :Lazy install nvim-treesitter
+   ```
+
+2. Install the Ruby parser:
+   ```vim
+   :TSInstall ruby
+   ```
+
+3. Verify the installation:
+   ```vim
+   :TSInstallInfo ruby
+   ```
+
+### Error: "No method call found at cursor"
+
+This error occurs when the cursor is not positioned on a factory_bot method call.
+
+**Solution:**
+
+Make sure your cursor is on or within a factory_bot method call (e.g., `create(:user)`).
+
+### Error: "Factory file not found"
+
+This error occurs when the factory file does not exist in the configured directory.
+
+**Solution:**
+
+1. Check that the factory file exists in the configured `definition_file_path` directory (default: `spec/factories`)
+2. Verify the file name matches the pluralized factory name (e.g., `users.rb` for `:user`)
+3. If using a custom naming convention, configure `custom_factory_name_patterns` or `suffix`

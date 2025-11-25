@@ -29,6 +29,10 @@ local default_config = {
   -- If you set it to false, it will not pluralize the factory name.
   pluralize_factory_name = true,
 
+  -- Whether to suppress error messages.
+  -- If you set it to true, error messages will not be displayed.
+  silent = false,
+
   -- Suffix of the factory file.
   -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
   --
@@ -49,6 +53,7 @@ function Config.setup(user_config)
     definition_file_path = { config.definition_file_path, "string" },
     jump_command = { config.jump_command, "string" },
     pluralize_factory_name = { config.pluralize_factory_name, "boolean" },
+    silent = { config.silent, "boolean" },
     suffix = { config.suffix, "string" },
   })
 end
