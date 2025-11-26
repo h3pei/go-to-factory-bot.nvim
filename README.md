@@ -1,12 +1,17 @@
 # go-to-factory-bot.nvim
 
-`go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from lines calling factory_bot methods such as `#create` and `#build`.
+`go-to-factory-bot.nvim` is a Neovim plugin that provides the ability to jump to the [factory_bot](https://github.com/thoughtbot/factory_bot) definition file from:
+
+- **Model files** (e.g., `app/models/user.rb` → `spec/factories/users.rb`)
+- **Lines calling factory_bot methods** such as `#create` and `#build`
 
 This plugin uses Treesitter to accurately parse Ruby code, supporting complex syntax including multi-line method calls and hyphenated factory names.
 
 ![go-to-factory-bot-nvim-demo-v2](https://github.com/h3pei/go-to-factory-bot.nvim/assets/1377455/f927117e-3bc9-487d-a24a-b8f327901647)
 
-## Usecase
+## Usecases
+
+### From Test Files
 
 For example, suppose you are editing an RSpec file that uses factory_bot as follows:
 
@@ -18,12 +23,23 @@ Sometimes you will want to check how the `:admin` trait is defined and what the 
 
 In this case, you can run the `:GoToFactoryBot` command on this line to jump to the user factory file (typically `spec/factories/users.rb`).
 
+### From Model Files
+
+When editing a model file (e.g., `app/models/user.rb`), you can run `:GoToFactoryBot` to jump directly to its factory file (`spec/factories/users.rb`).
+
+This is especially useful when:
+- Creating a new factory file for an existing model
+- Reviewing factory definitions while working on model code
+- Navigating between model and factory during development
+
+**Namespace support**: For namespaced models like `app/models/admin/user.rb`, the plugin will prioritize `spec/factories/admin/users.rb` over `spec/factories/users.rb`.
+
 ## Requirements
 
-**This plugin requires Treesitter** to parse Ruby code accurately.
+**Treesitter is required only for test file navigation** (parsing factory_bot method calls). Model file navigation works without Treesitter.
 
-- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter)
-- Ruby parser for Treesitter (install with `:TSInstall ruby`)
+- [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) - Required for test file navigation
+- Ruby parser for Treesitter (install with `:TSInstall ruby`) - Required for test file navigation
 
 ## Installation
 
@@ -70,18 +86,35 @@ Some settings can be customised. See [Configuration](#Configuration) for more in
 
 ## Usage / Command
 
-This plugin only provides `:GoToFactoryBot` command.
+This plugin provides a single `:GoToFactoryBot` command that works intelligently based on context:
 
-So, simply run this command on the line containing the factory_bot method call.
+- **In model files** (`app/models/*.rb`): Jumps to the corresponding factory file
+- **In test files**: Jumps to the factory file from the factory_bot method call at cursor position
 
-It may be more convenient to define a shortcut command called `:GF` as follows.
+Simply run `:GoToFactoryBot` in either context.
+
+### Shortcut
+
+It may be more convenient to define a shortcut command called `:GF` as follows:
 ```lua
 vim.api.nvim_create_user_command("GF", "GoToFactoryBot", {})
 ```
 
 ## Features
 
-### Supported Syntax
+### Model File Navigation
+
+Jump directly from model files to their factory definitions:
+
+- **Simple models**: `app/models/user.rb` → `spec/factories/users.rb`
+- **Namespaced models**: `app/models/admin/user.rb` → `spec/factories/admin/users.rb` (with fallback to `spec/factories/users.rb`)
+- **Deep namespaces**: `app/models/api/v1/user.rb` → `spec/factories/api/v1/users.rb`
+
+**Excluded patterns** (automatically skipped):
+- Concerns (`app/models/concerns/*`)
+- Base classes (`application_record.rb`, `*_base.rb`)
+
+### Supported Syntax (Test Files)
 
 Thanks to Treesitter, this plugin accurately handles:
 

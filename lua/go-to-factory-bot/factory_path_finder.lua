@@ -53,4 +53,28 @@ function M.find_by_name(factory_name)
   return nil
 end
 
+---@param factory_name string
+---@param subdirectory string|nil (e.g., "admin/")
+---@return string|nil
+function M.find_by_name_with_namespace(factory_name, subdirectory)
+  local patterns = generate_search_patterns(factory_name)
+
+  -- 名前空間付きのパスを優先的に探索
+  if subdirectory then
+    for _, dir_path in ipairs(DEFAULT_DEFINITION_PATHS) do
+      for _, pattern in ipairs(patterns) do
+        -- 完全なパスを構築: "spec/factories/admin/users.rb"
+        local full_path = dir_path .. "/" .. subdirectory .. pattern
+        -- ファイルの存在確認
+        if vim.fn.filereadable(full_path) == 1 then
+          return full_path
+        end
+      end
+    end
+  end
+
+  -- フォールバック: 既存のfind_by_name()を使用
+  return M.find_by_name(factory_name)
+end
+
 return M
