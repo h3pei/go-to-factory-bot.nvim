@@ -11,6 +11,15 @@ local function notify(message, level)
 end
 
 local function go_to_factory_bot()
+  -- Treesitter の依存関係チェック
+  if not FactoryNameExtractor.is_available() then
+    notify(
+      "Treesitter is not available. Please install nvim-treesitter and Ruby parser (:TSInstall ruby)",
+      vim.log.levels.ERROR
+    )
+    return
+  end
+
   -- FactoryNameExtractorを経由してファクトリ名を抽出
   local factory_name, error_message = FactoryNameExtractor.extract()
 
@@ -33,15 +42,6 @@ end
 function M.setup(user_config)
   user_config = user_config or {}
   Config.setup(user_config)
-
-  -- Treesitterの前提条件チェック
-  if not FactoryNameExtractor.is_available() then
-    vim.notify(
-      "go-to-factory-bot.nvim: Treesitter is not available. " .. "Please install nvim-treesitter and Ruby parser (:TSInstall ruby)",
-      vim.log.levels.WARN
-    )
-    return -- プラグインの初期化を中止
-  end
 
   vim.api.nvim_create_user_command("GoToFactoryBot", function()
     go_to_factory_bot()
