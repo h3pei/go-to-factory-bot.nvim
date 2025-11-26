@@ -22,25 +22,20 @@ local default_config = {
   silent = false,
 }
 
-local Config = {}
+local M = {}
 
-function Config.setup(user_config)
+function M.setup(user_config)
   config = vim.tbl_deep_extend("force", default_config, user_config)
 
-  -- FIXME: In Neovim 0.11, the current usage of vim.validate() will be deprecated.
-  -- https://neovim.io/doc/user/deprecated.html#deprecated-0.11
-  -- https://neovim.io/doc/user/lua.html#vim.validate()
-  vim.validate({
-    custom_factory_name_patterns = { config.custom_factory_name_patterns, "table" },
-    jump_command = { config.jump_command, "string" },
-    silent = { config.silent, "boolean" },
-  })
+  vim.validate("custom_factory_name_patterns", config.custom_factory_name_patterns, "table")
+  vim.validate("jump_command", config.jump_command, "string")
+  vim.validate("silent", config.silent, "boolean")
 end
 
-setmetatable(Config, {
+setmetatable(M, {
   __index = function(_, key)
     return config[key]
   end,
 })
 
-return Config
+return M

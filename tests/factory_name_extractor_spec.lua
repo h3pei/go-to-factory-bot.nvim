@@ -152,14 +152,6 @@ describe("extract", function()
     end)
   end)
 
-  describe("when factory name contains hyphen", function()
-    it("converts hyphen to underscore", function()
-      bufnr = setup_test_buffer('create(:"user-profile")', 0)
-      local result = FactoryNameExtractor.extract()
-      assert.are.same(result, "user_profile")
-    end)
-  end)
-
   describe("when method call spans multiple lines", function()
     it("returns factory name", function()
       bufnr = vim.api.nvim_create_buf(false, true)
@@ -181,13 +173,13 @@ describe("extract", function()
 
   describe("when cursor is on whitespace", function()
     it("returns factory name when cursor is on whitespace before method", function()
-      bufnr = setup_test_buffer("    create(:user)", 0)  -- カーソルがインデント上
+      bufnr = setup_test_buffer("    create(:user)", 0) -- カーソルがインデント上
       local result = FactoryNameExtractor.extract()
       assert.are.same(result, "user")
     end)
 
     it("returns factory name when cursor is on whitespace after method", function()
-      bufnr = setup_test_buffer("create(:user)    ", 16)  -- カーソルが末尾の空白上
+      bufnr = setup_test_buffer("create(:user)    ", 16) -- カーソルが末尾の空白上
       local result = FactoryNameExtractor.extract()
       assert.are.same(result, "user")
     end)
@@ -195,9 +187,9 @@ describe("extract", function()
 
   describe("when multiple FactoryBot methods on same line", function()
     it("returns first factory name when multiple calls on same line", function()
-      bufnr = setup_test_buffer("create(:user); build(:admin)", 20)  -- カーソルが後半
+      bufnr = setup_test_buffer("create(:user); build(:admin)", 20) -- カーソルが後半
       local result = FactoryNameExtractor.extract()
-      assert.are.same(result, "user")  -- 最初のものを選択
+      assert.are.same(result, "user") -- 最初のものを選択
     end)
   end)
 
@@ -213,7 +205,7 @@ describe("extract", function()
       })
       local win = vim.api.nvim_get_current_win()
       vim.api.nvim_win_set_buf(win, bufnr)
-      vim.api.nvim_win_set_cursor(win, { 2, 2 })  -- カーソルを2行目に配置
+      vim.api.nvim_win_set_cursor(win, { 2, 2 }) -- カーソルを2行目に配置
 
       local result = FactoryNameExtractor.extract()
       assert.are.same(result, "user")

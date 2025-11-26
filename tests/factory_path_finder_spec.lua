@@ -139,7 +139,7 @@ describe("multi-directory search", function()
   end)
 end)
 
-describe("find_by_name_with_namespace", function()
+describe("find_by_name with namespace", function()
   local FactoryPathFinder = require("go-to-factory-bot.factory_path_finder")
 
   after_each(function()
@@ -157,49 +157,43 @@ describe("find_by_name_with_namespace", function()
   it("finds namespaced factory file", function()
     vim.fn.mkdir("spec/factories/admin", "p")
     vim.fn.writefile({}, "spec/factories/admin/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name_with_namespace("user", "admin/"), "spec/factories/admin/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user", "admin/"), "spec/factories/admin/users.rb")
   end)
 
   it("finds factory in deep subdirectory", function()
     vim.fn.mkdir("spec/factories/api/v1", "p")
     vim.fn.writefile({}, "spec/factories/api/v1/users.rb")
-    assert.equals(
-      FactoryPathFinder.find_by_name_with_namespace("user", "api/v1/"),
-      "spec/factories/api/v1/users.rb"
-    )
+    assert.equals(FactoryPathFinder.find_by_name("user", "api/v1/"), "spec/factories/api/v1/users.rb")
   end)
 
-  it("falls back to root when namespaced file not found", function()
+  it("returns nil when namespaced file not found", function()
     vim.fn.mkdir("spec/factories", "p")
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name_with_namespace("user", "admin/"), "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user", "admin/"), nil)
   end)
 
-  it("prefers namespaced over root", function()
+  it("finds namespaced file when both namespaced and root exist", function()
     vim.fn.mkdir("spec/factories/admin", "p")
     vim.fn.writefile({}, "spec/factories/admin/users.rb")
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name_with_namespace("user", "admin/"), "spec/factories/admin/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user", "admin/"), "spec/factories/admin/users.rb")
   end)
 
   it("respects pattern priority in namespaced search", function()
     vim.fn.mkdir("spec/factories/admin", "p")
     vim.fn.writefile({}, "spec/factories/admin/users.rb")
     vim.fn.writefile({}, "spec/factories/admin/user.rb")
-    assert.equals(
-      FactoryPathFinder.find_by_name_with_namespace("user", "admin/"),
-      "spec/factories/admin/users.rb"
-    )
+    assert.equals(FactoryPathFinder.find_by_name("user", "admin/"), "spec/factories/admin/users.rb")
   end)
 
   it("works without subdirectory (nil)", function()
     vim.fn.mkdir("spec/factories", "p")
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name_with_namespace("user", nil), "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user", nil), "spec/factories/users.rb")
   end)
 
   it("returns nil when no file found", function()
     vim.fn.mkdir("spec/factories", "p")
-    assert.equals(FactoryPathFinder.find_by_name_with_namespace("user", "admin/"), nil)
+    assert.equals(FactoryPathFinder.find_by_name("user", "admin/"), nil)
   end)
 end)
