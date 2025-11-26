@@ -122,11 +122,6 @@ require('go-to-factory-bot').setup({
   -- }
   custom_factory_name_patterns = {},
 
-  -- Path of the directory where the factory file is located.
-  -- In Ruby on Rails, this corresponds to the value set in `Rails.application.config.factory_bot.definition_file_paths`.
-  -- see: https://thoughtbot.github.io/factory_bot/ref/find_definitions.html
-  definition_file_path = "spec/factories",
-
   -- Command to open the file to jump to.
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
@@ -139,14 +134,20 @@ require('go-to-factory-bot').setup({
 
 ### How it works
 
-This plugin automatically searches for factory files in the following order:
+This plugin **requires zero configuration**. It automatically searches for factory files in the following locations:
+
+1. `spec/factories/` (RSpec)
+2. `test/factories/` (Minitest)
+3. `factories/` (project root)
+
+For each location, it tries these filename patterns in order:
 
 1. **Plural form**: `users.rb` (most common)
 2. **Singular form**: `user.rb`
 3. **Plural + factory suffix**: `users_factory.rb`
 4. **Singular + factory suffix**: `user_factory.rb`
 
-**No configuration is needed for most cases.** The plugin will automatically try these patterns until a match is found.
+The plugin will automatically try these combinations until a match is found.
 
 ## Troubleshooting
 
@@ -181,10 +182,13 @@ Make sure your cursor is on or within a factory_bot method call (e.g., `create(:
 
 ### Error: "Factory file not found"
 
-This error occurs when the factory file does not exist in the configured directory.
+This error occurs when the factory file does not exist in any of the standard directories.
 
 **Solution:**
 
-1. Check that the factory file exists in the configured `definition_file_path` directory (default: `spec/factories`)
-2. Verify the file name matches the pluralized factory name (e.g., `users.rb` for `:user`)
-3. If using a custom naming convention, configure `custom_factory_name_patterns` or `suffix`
+1. Check that the factory file exists in one of these directories:
+   - `spec/factories/`
+   - `test/factories/`
+   - `factories/`
+2. Verify the file name matches one of the expected patterns (e.g., `users.rb`, `user.rb`, `users_factory.rb`, or `user_factory.rb` for `:user`)
+3. If using a custom naming convention, configure `custom_factory_name_patterns`

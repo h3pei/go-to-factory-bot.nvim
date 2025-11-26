@@ -6,7 +6,15 @@ describe("find_by_name", function()
   end)
 
   after_each(function()
-    vim.fn.delete("spec", "rf")
+    if vim.fn.isdirectory("spec") == 1 then
+      vim.fn.delete("spec", "rf")
+    end
+    if vim.fn.isdirectory("test") == 1 then
+      vim.fn.delete("test", "rf")
+    end
+    if vim.fn.isdirectory("factories") == 1 then
+      vim.fn.delete("factories", "rf")
+    end
     if vim.fn.isdirectory("app") == 1 then
       vim.fn.delete("app", "rf")
     end
@@ -14,12 +22,12 @@ describe("find_by_name", function()
 
   it("returns factory_file path when factory_file exists", function()
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users.rb")
   end)
 
   it("returns nil when factory_file does not exist", function()
     vim.fn.writefile({}, "spec/factories/dummy_users.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), nil)
+    assert.equals(FactoryPathFinder.find_by_name("user"), nil)
   end)
 end)
 
@@ -31,7 +39,15 @@ describe("multi-pattern search", function()
   end)
 
   after_each(function()
-    vim.fn.delete("spec", "rf")
+    if vim.fn.isdirectory("spec") == 1 then
+      vim.fn.delete("spec", "rf")
+    end
+    if vim.fn.isdirectory("test") == 1 then
+      vim.fn.delete("test", "rf")
+    end
+    if vim.fn.isdirectory("factories") == 1 then
+      vim.fn.delete("factories", "rf")
+    end
     if vim.fn.isdirectory("app") == 1 then
       vim.fn.delete("app", "rf")
     end
@@ -39,22 +55,22 @@ describe("multi-pattern search", function()
 
   it("finds singular file when only singular exists", function()
     vim.fn.writefile({}, "spec/factories/user.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/user.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/user.rb")
   end)
 
   it("finds plural file when only plural exists", function()
     vim.fn.writefile({}, "spec/factories/users.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users.rb")
   end)
 
   it("finds {plural}_factory.rb", function()
     vim.fn.writefile({}, "spec/factories/users_factory.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/users_factory.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users_factory.rb")
   end)
 
   it("finds {singular}_factory.rb", function()
     vim.fn.writefile({}, "spec/factories/user_factory.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/user_factory.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/user_factory.rb")
   end)
 
   it("prefers plural over other patterns", function()
@@ -62,13 +78,63 @@ describe("multi-pattern search", function()
     vim.fn.writefile({}, "spec/factories/users.rb")
     vim.fn.writefile({}, "spec/factories/user.rb")
     vim.fn.writefile({}, "spec/factories/users_factory.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users.rb")
   end)
 
   it("does not find files outside of definition_file_path", function()
     -- app/models/user.rb は見つけない（安全性の確認）
     vim.fn.mkdir("app/models", "p")
     vim.fn.writefile({}, "app/models/user.rb")
-    assert.equals(FactoryPathFinder.find_by_name("user", "spec/factories"), nil)
+    assert.equals(FactoryPathFinder.find_by_name("user"), nil)
+  end)
+end)
+
+describe("multi-directory search", function()
+  local FactoryPathFinder = require("go-to-factory-bot.factory_path_finder")
+
+  after_each(function()
+    if vim.fn.isdirectory("spec") == 1 then
+      vim.fn.delete("spec", "rf")
+    end
+    if vim.fn.isdirectory("test") == 1 then
+      vim.fn.delete("test", "rf")
+    end
+    if vim.fn.isdirectory("factories") == 1 then
+      vim.fn.delete("factories", "rf")
+    end
+  end)
+
+  it("finds file in spec/factories", function()
+    vim.fn.mkdir("spec/factories", "p")
+    vim.fn.writefile({}, "spec/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users.rb")
+  end)
+
+  it("finds file in test/factories", function()
+    vim.fn.mkdir("test/factories", "p")
+    vim.fn.writefile({}, "test/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "test/factories/users.rb")
+  end)
+
+  it("finds file in factories", function()
+    vim.fn.mkdir("factories", "p")
+    vim.fn.writefile({}, "factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "factories/users.rb")
+  end)
+
+  it("prefers spec/factories over test/factories", function()
+    vim.fn.mkdir("spec/factories", "p")
+    vim.fn.mkdir("test/factories", "p")
+    vim.fn.writefile({}, "spec/factories/users.rb")
+    vim.fn.writefile({}, "test/factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "spec/factories/users.rb")
+  end)
+
+  it("prefers test/factories over factories", function()
+    vim.fn.mkdir("test/factories", "p")
+    vim.fn.mkdir("factories", "p")
+    vim.fn.writefile({}, "test/factories/users.rb")
+    vim.fn.writefile({}, "factories/users.rb")
+    assert.equals(FactoryPathFinder.find_by_name("user"), "test/factories/users.rb")
   end)
 end)

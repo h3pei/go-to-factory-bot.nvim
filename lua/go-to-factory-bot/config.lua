@@ -13,11 +13,6 @@ local default_config = {
   -- }
   custom_factory_name_patterns = {},
 
-  -- Path of the directory where the factory file is located.
-  -- In Ruby on Rails, this corresponds to the value set in `Rails.application.config.factory_bot.definition_file_paths`.
-  -- see: https://thoughtbot.github.io/factory_bot/ref/find_definitions.html
-  definition_file_path = "spec/factories",
-
   -- Command to open the file to jump to.
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
@@ -37,7 +32,6 @@ function Config.setup(user_config)
   -- https://neovim.io/doc/user/lua.html#vim.validate()
   vim.validate({
     custom_factory_name_patterns = { config.custom_factory_name_patterns, "table" },
-    definition_file_path = { config.definition_file_path, "string" },
     jump_command = { config.jump_command, "string" },
     silent = { config.silent, "boolean" },
   })
