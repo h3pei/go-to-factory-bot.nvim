@@ -178,4 +178,45 @@ describe("extract", function()
       assert.are.same(result, "user")
     end)
   end)
+
+  describe("when cursor is on whitespace", function()
+    it("returns factory name when cursor is on whitespace before method", function()
+      bufnr = setup_test_buffer("    create(:user)", 0)  -- カーソルがインデント上
+      local result = FactoryNameExtractor.extract()
+      assert.are.same(result, "user")
+    end)
+
+    it("returns factory name when cursor is on whitespace after method", function()
+      bufnr = setup_test_buffer("create(:user)    ", 16)  -- カーソルが末尾の空白上
+      local result = FactoryNameExtractor.extract()
+      assert.are.same(result, "user")
+    end)
+  end)
+
+  describe("when multiple FactoryBot methods on same line", function()
+    it("returns first factory name when multiple calls on same line", function()
+      bufnr = setup_test_buffer("create(:user); build(:admin)", 20)  -- カーソルが後半
+      local result = FactoryNameExtractor.extract()
+      assert.are.same(result, "user")  -- 最初のものを選択
+    end)
+  end)
+
+  describe("when cursor is on second line of multi-line method call", function()
+    it("returns factory name when cursor is on argument line", function()
+      bufnr = vim.api.nvim_create_buf(false, true)
+      vim.api.nvim_buf_set_option(bufnr, "filetype", "ruby")
+      vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, {
+        "create(",
+        "  :user,",
+        "  :admin",
+        ")",
+      })
+      local win = vim.api.nvim_get_current_win()
+      vim.api.nvim_win_set_buf(win, bufnr)
+      vim.api.nvim_win_set_cursor(win, { 2, 2 })  -- カーソルを2行目に配置
+
+      local result = FactoryNameExtractor.extract()
+      assert.are.same(result, "user")
+    end)
+  end)
 end)

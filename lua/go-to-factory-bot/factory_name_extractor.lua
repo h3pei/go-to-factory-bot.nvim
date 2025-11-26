@@ -94,6 +94,41 @@ local function find_method_call(node)
   return nil
 end
 
+---指定行に重なる最初のFactoryBotメソッド呼び出しを探す（再帰探索）
+---@param node TSNode
+---@param target_row number
+---@return TSNode|nil
+local function find_first_factory_bot_call(node, target_row)
+  if not node then
+    return nil
+  end
+
+  local node_type = node:type()
+
+  -- このノードがメソッド呼び出しかチェック
+  if node_type == "call" or node_type == "method_call" then
+    -- ノードが対象行と重なっているかチェック
+    local start_row, _, end_row, _ = node:range()
+    if start_row <= target_row and target_row <= end_row then
+      -- メソッド名を取得してFactoryBotメソッドかチェック
+      local method_name = get_method_name(node)
+      if method_name and is_factory_bot_method(method_name) then
+        return node
+      end
+    end
+  end
+
+  -- 子ノードを再帰的に探索
+  for child in node:iter_children() do
+    local result = find_first_factory_bot_call(child, target_row)
+    if result then
+      return result
+    end
+  end
+
+  return nil
+end
+
 ---引数リストから最初のシンボルを取得
 ---@param call_node TSNode
 ---@return string|nil
@@ -125,25 +160,36 @@ end
 ---@return string|nil factory_name
 ---@return string|nil error_message
 function M.extract()
-  local node = get_node_at_cursor()
-  if not node then
-    return nil, "No node at cursor"
+  -- カーソル位置を取得
+  local cursor = vim.api.nvim_win_get_cursor(0)
+  local cursor_row = cursor[1] - 1  -- 0-based
+  local cursor_col = cursor[2]
+
+  -- パーサーとルートノードを取得
+  local parser = vim.treesitter.get_parser(0, "ruby")
+  local tree = parser:parse()[1]
+  local root = tree:root()
+
+  -- カーソル位置のノードを取得
+  local node = root:named_descendant_for_range(cursor_row, cursor_col, cursor_row, cursor_col)
+
+  local call_node = nil
+
+  -- アプローチ1: まず行全体から最初のメソッドを検索
+  -- これにより、カーソルがどこにあっても行の最初のメソッドを優先的に検出
+  call_node = find_first_factory_bot_call(root, cursor_row)
+
+  -- アプローチ2: 見つからなければカーソル位置のノードから親を辿る
+  -- これにより、複数行メソッド呼び出しの内部にカーソルがある場合も検出できる
+  if not call_node and node then
+    call_node = find_method_call(node)
   end
 
-  local call_node = find_method_call(node)
   if not call_node then
-    return nil, "No method call found at cursor"
+    return nil, "No FactoryBot method call found"
   end
 
-  local method_name = get_method_name(call_node)
-  if not method_name then
-    return nil, "Could not extract method name"
-  end
-
-  if not is_factory_bot_method(method_name) then
-    return nil, string.format("Not a factory_bot method: %s", method_name)
-  end
-
+  -- 既存のロジックを使ってファクトリ名を抽出
   local factory_name = get_first_symbol_argument(call_node)
   if not factory_name then
     return nil, "Could not extract factory name from arguments"
