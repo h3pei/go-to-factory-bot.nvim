@@ -28,8 +28,7 @@ local function go_to_factory_bot()
     return
   end
 
-  local factory_path =
-    FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path, Config.suffix, Config.pluralize_factory_name)
+  local factory_path = FactoryPathFinder.find_by_name(factory_name, Config.definition_file_path)
 
   if not factory_path then
     notify(string.format("Factory file not found for: %s", factory_name), vim.log.levels.WARN)

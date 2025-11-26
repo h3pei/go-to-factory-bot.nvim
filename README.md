@@ -112,9 +112,6 @@ The following are the settings and their default values:
 require('go-to-factory-bot').setup({
   -- Patterns when determining the factory file name from the factory name.
   --
-  -- By default, go-to-factory-bot.nvim looks for a factory file with the plural form of the factory name.
-  -- For example, for a factory named "user", look for an ruby file with the plural "users".
-  --
   -- If you have your own non-plural rule factory, you can set it up here.
   -- Also, this plugin's plural system conversion is not perfect. If you encounter an inappropriate conversion, please set it here.
   --
@@ -134,21 +131,22 @@ require('go-to-factory-bot').setup({
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
 
-  -- Whether to pluralize the factory name when searching for the factory file.
-  -- If you set it to false, it will not pluralize the factory name.
-  pluralize_factory_name = true,
-
   -- Whether to suppress error messages.
   -- If you set it to true, error messages will not be displayed.
   silent = false,
-
-  -- Suffix of the factory file.
-  -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
-  --
-  -- related: https://github.com/thoughtbot/factory_bot_rails/blob/main/README.md#generators
-  suffix = "",
 })
 ```
+
+### How it works
+
+This plugin automatically searches for factory files in the following order:
+
+1. **Plural form**: `users.rb` (most common)
+2. **Singular form**: `user.rb`
+3. **Plural + factory suffix**: `users_factory.rb`
+4. **Singular + factory suffix**: `user_factory.rb`
+
+**No configuration is needed for most cases.** The plugin will automatically try these patterns until a match is found.
 
 ## Troubleshooting
 

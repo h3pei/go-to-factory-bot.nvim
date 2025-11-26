@@ -3,9 +3,6 @@ local config = {}
 local default_config = {
   -- Patterns when determining the factory file name from the factory name.
   --
-  -- By default, go-to-factory-bot.nvim looks for a factory file with the plural form of the factory name.
-  -- For example, for a factory named "user", look for an ruby file with the plural "users".
-  --
   -- If you have your own non-plural rule factory, you can set it up here.
   -- Also, this plugin's plural system conversion is not perfect. If you encounter an inappropriate conversion, please set it here.
   --
@@ -25,19 +22,9 @@ local default_config = {
   -- Examples of other alternatives: vsplit, split, tabedit
   jump_command = "edit",
 
-  -- Whether to pluralize the factory name when searching for the factory file.
-  -- If you set it to false, it will not pluralize the factory name.
-  pluralize_factory_name = true,
-
   -- Whether to suppress error messages.
   -- If you set it to true, error messages will not be displayed.
   silent = false,
-
-  -- Suffix of the factory file.
-  -- For example, if you specify "factory" as suffix, it will try to find "users_factory.rb" from the "user" factory.
-  --
-  -- related: https://github.com/thoughtbot/factory_bot_rails/blob/main/README.md#generators
-  suffix = "",
 }
 
 local Config = {}
@@ -52,9 +39,7 @@ function Config.setup(user_config)
     custom_factory_name_patterns = { config.custom_factory_name_patterns, "table" },
     definition_file_path = { config.definition_file_path, "string" },
     jump_command = { config.jump_command, "string" },
-    pluralize_factory_name = { config.pluralize_factory_name, "boolean" },
     silent = { config.silent, "boolean" },
-    suffix = { config.suffix, "string" },
   })
 end
 
